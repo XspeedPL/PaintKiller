@@ -12,14 +12,20 @@ namespace PaintKiller
 {
     internal sealed class NetServer : IDisposable
     {
+        /// <summary>Constants for packet types recognized by the server side</summary>
         internal static class Packets
         {
             internal const byte LobbyJoin = 0, Controls = 1, Disconnect = 2;
         }
 
         private UdpClient server;
+
+        /// <summary>Connected clients count</summary>
         internal byte ccount = 1;
+
+        /// <summary>Packet read thread worker</summary>
         private readonly BackgroundWorker bgw = new BackgroundWorker() { WorkerSupportsCancellation = true };
+
 
         internal NetServer()
         {
@@ -43,6 +49,7 @@ namespace PaintKiller
             bgw.Dispose();
         }
 
+        /// <summary>Reads a packet from any source and processes it</summary>
         private void Read()
         {
             IPEndPoint ep = new IPEndPoint(IPAddress.Any, Net.port);
@@ -93,6 +100,8 @@ namespace PaintKiller
                 }
         }
 
+        /// <summary>Sends a packet to all registered clients</summary>
+        /// <param name="np">The payload</param>
         private void Broadcast(NetPacket np)
         {
             for (int i = 1; i < 4; ++i)
@@ -100,16 +109,21 @@ namespace PaintKiller
                     Send(np, PaintKiller.P[i].ep);
         }
 
+        /// <summary>Sends a packet to a specific endpoint</summary>
+        /// <param name="np">The payload</param>
+        /// <param name="ep">Client's endpoint</param>
         private void Send(NetPacket np, IPEndPoint ep)
         {
             Net.SecureOut(server, np, ep);
         }
 
+        /// <summary>Broadcasts a sever termination event packet</summary>
         internal void SendEnd()
         {
-            Broadcast(NetPacket.Prepare(2));
+            Broadcast(NetPacket.Prepare(NetClient.Packets.GameEnd));
         }
 
+        /// <summary>Constructs and broadcasts a list of all connected players in the lobby</summary>
         internal void SendPlrList()
         {
             NetPacket.Writer data = new NetPacket.Writer(ccount * 5 + 1);
@@ -124,11 +138,15 @@ namespace PaintKiller
             Broadcast(data.GetPacket(NetClient.Packets.LobbyJoin));
         }
 
+        /// <summary>Broadcasts a gamestate packet indicating a pause or resume</summary>
+        /// <param name="pause">True if the new state is a pause, false otherwise</param>
         internal void SendGame(bool pause)
         {
-            Broadcast(NetPacket.Prepare(4, new List<byte>(new byte[] { (byte)(pause ? 1 : 0) })));
+            Broadcast(NetPacket.Prepare(NetClient.Packets.Pause, new List<byte>(new byte[] { (byte)(pause ? 1 : 0) })));
         }
 
+        /// <summary>Constructs and broadcasts a list of all active game objects along with players and their scores</summary>
+        /// <param name="objs">Game objects list snapshot</param>
         internal void SendObjs(List<GameObj> objs)
         {
             NetPacket.Writer data = new NetPacket.Writer(objs.Count * 70 + 20);
@@ -144,6 +162,9 @@ namespace PaintKiller
             Broadcast(data.GetPacket(NetClient.Packets.EntList));
         }
 
+        /// <summary>Writes data of a single game object into a packet</summary>
+        /// <param name="data">The output packet</param>
+        /// <param name="go">A game object to extract data from</param>
         private void WriteData(NetPacket.Writer data, GameObj go)
         {
             data.WriteUInt(go.ID);
@@ -161,6 +182,7 @@ namespace PaintKiller
             data.WriteFloat(go.pos.Y);
             data.WriteFloat(go.fce.X);
             data.WriteFloat(go.fce.Y);
+            // TODO: Add a member method into GameObj for writing/reading?
             if (go is GEC)
             {
                 GEC g = (GEC)go;

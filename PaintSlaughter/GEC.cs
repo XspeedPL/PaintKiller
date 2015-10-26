@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace PaintKiller
 {
+    /// <summary>Single texture effect game object class</summary>
     public class GEC : GameObj
     {
         // 0 - scale / 2

@@ -12,14 +12,21 @@ namespace PaintKiller
 {
     internal sealed class NetClient : IDisposable
     {
+        /// <summary>Constants for packet types recognized by the client side</summary>
         internal static class Packets
         {
             internal const byte LobbyConnect = 0, EntList = 1, GameEnd = 2, LobbyJoin = 3, Pause = 4;
         }
 
         private UdpClient client;
+
+        /// <summary>Unique client's game object ID</summary>
         internal uint cID = 0;
+
+        /// <summary>Server connection and packet read thread worker</summary>
         private readonly BackgroundWorker bgw = new BackgroundWorker() { WorkerSupportsCancellation = true };
+
+        /// <summary>The server's endpoint</summary>
         private IPEndPoint epS;
 
         internal NetClient(IPAddress ip, byte cls)
@@ -48,11 +55,14 @@ namespace PaintKiller
             bgw.Dispose();
         }
 
+        /// <summary>Sends out a lobby connection request packet to the server</summary>
+        /// <param name="cls">Selected player character class number</param>
         public void SendConnect(byte cls)
         {
             Net.SecureOut(client, NetPacket.Prepare(NetServer.Packets.LobbyJoin, new List<byte>(new byte[] { cls })), epS);
         }
 
+        /// <summary>Reads a packet from the server and processes it</summary>
         private void Read()
         {
             NetPacket np = Net.SecureIn(client, ref epS);
@@ -109,6 +119,8 @@ namespace PaintKiller
                 }
         }
 
+        /// <summary>Sends a player controls snapshot to the server</summary>
+        /// <param name="c">The controls snapshot</param>
         internal void SendKeys(Net.Control c)
         {
             NetPacket.Writer data = new NetPacket.Writer(9);
@@ -118,11 +130,15 @@ namespace PaintKiller
             Net.SecureOut(client, data.GetPacket(NetServer.Packets.Controls), epS);
         }
 
+        /// <summary>Sends a disconnect event packet to the server</summary>
         internal void SendEnd()
         {
             Net.SecureOut(client, NetPacket.Prepare(NetServer.Packets.Disconnect), epS);
         }
 
+        /// <summary>Reads a single game object's data from the packet</summary>
+        /// <param name="np"></param>
+        /// <returns></returns>
         private static GameObj ReadEntData(NetPacket np)
         {
             uint id = np.ReadUInt();

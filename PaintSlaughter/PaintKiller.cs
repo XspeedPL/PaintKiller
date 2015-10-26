@@ -13,11 +13,13 @@ namespace PaintKiller
 {
     internal sealed class PaintKiller : Game
     {
+        /// <summary>Recognized game states</summary>
         internal enum State : byte
         {
             Main, Prefs, SP, MPHost, MPJoin, Game, Paused
         }
-
+        
+        /// <summary>Specialized List class for faster player and enemy game object lookups</summary>
         internal sealed class EntityList : List<GameObj>
         {
             private LinkedList<GPlayer> gplist = null;
@@ -72,29 +74,52 @@ namespace PaintKiller
             }
         }
 
+        /// <summary>Global texture cache map (not sure if neccessary)</summary>
         private static readonly Dictionary<string, Texture2D> texs = new Dictionary<string, Texture2D>();
+
+        /// <summary>Global random number generator</summary>
         public static readonly Random rand = new Random();
+
+        /// <summary>Current game object list snapshot</summary>
         private static EntityList objs = new EntityList();
+
+        /// <summary>New game objects to be added on the next game tick</summary>
         private static readonly LinkedList<GameObj> queue = new LinkedList<GameObj>();
+
+        /// <summary>Game-wide used single font</summary>
         public static SpriteFont Font;
+
         private GraphicsDeviceManager graphics;
         private SpriteBatch sb;
-        private InputManager input;
+
+        /// <summary>Used to check for repeating key presses</summary>
         private static KeyboardState prev = Keyboard.GetState();
+
         private byte tab = 1, side = 0, spawn = 1;
+
+        /// <summary>Current game state</summary>
         internal static State state = State.Main;
+
+        /// <summary>Current IP string used in the connection screen</summary>
         private string ip = "";
+
+        /// <summary>Server instance used only when hosting a game</summary>
         private NetServer server;
+
+        /// <summary>Client instance used only if playing in a multiplayer mode</summary>
         private NetClient client;
+
+        private InputManager input;
         private IGamePad pad = null;
+
+        /// <summary>Global game instance object</summary>
         internal static PaintKiller Inst;
 
         public int Width { get { return GraphicsDevice.Viewport.Width; } }
         public int Height { get { return GraphicsDevice.Viewport.Height; } }
 
+        /// <summary>Player game objects array</summary>
         public static readonly GPlayer[] P = new GPlayer[4];
-
-        public static KeyboardState PrevKeys { get { return prev; } }
 
         public PaintKiller() : base()
         {
@@ -108,25 +133,39 @@ namespace PaintKiller
             Inst = this;
         }
 
+        /// <summary>Returns a readonly game object list snapshot</summary>
         public static IEnumerable<GameObj> GetObjs() { return objs; }
 
+        /// <summary>Adds a new game object to the game</summary>
+        /// <param name="go">The new game object</param>
         public static void AddObj(GameObj go) { queue.AddLast(go); }
 
+        /// <summary>Searches for a game object associated with a specified ID</summary>
+        /// <param name="id">The ID to look up</param>
+        /// <returns>A game object with the specified ID, null if not found</returns>
         public static GameObj GetObj(uint id) { return objs.GetByID(id); }
 
+        /// <summary>Searches for a player with a specific endpoint</summary>
+        /// <param name="ep">The endpoint to look up</param>
+        /// <returns>A player with the specific endpoint, null if not found</returns>
         internal static GPlayer GetPlr(IPEndPoint ep)
         {
             for (int i = 0; i < 4; ++i) if (P[i] != null && P[i].ep.Equals(ep)) return P[i];
             return null;
         }
 
+        /// <summary>Searches for a texture by it's assigned name</summary>
+        /// <param name="txid">Texture name</param>
+        /// <returns>A texture object if it was found, null otherwise</returns>
         public static Texture2D GetTex(string txid)
         {
             return texs.ContainsKey(txid) ? texs[txid] : null;
         }
 
+        /// <summary>Returns an immutable list of player game objects</summary>
         public static LinkedList<GPlayer> GetPlrs() { return objs.PlrList(); }
 
+        /// <summary>Returns an immutable list of enemny game objects</summary>
         public static LinkedList<GEnemy> GetEnes() { return objs.EneList(); }
 
         protected override void Initialize()
@@ -137,11 +176,15 @@ namespace PaintKiller
             TargetElapsedTime = new TimeSpan(200000);
         }
 
+        /// <summary>Replaces the game object list snapshot with a new one</summary>
+        /// <param name="list">A new snapshot</param>
         internal static void NewList(EntityList list)
         {
             objs = list;
         }
 
+        /// <summary>Registers a new texture in the cache map</summary>
+        /// <param name="tex">Texture name</param>
         private void AddTex(string tex)
         {
             Texture2D t = Content.Load<Texture2D>(tex);
@@ -195,6 +238,7 @@ namespace PaintKiller
             }
         }
 
+        /// <summary>Resets the game and returns the player to the main menu</summary>
         internal void Return()
         {
             if (server != null)
@@ -522,6 +566,7 @@ namespace PaintKiller
             base.Draw(gameTime);
         }
 
+        /// <summary>Draws a string with an outline</summary>
         private void DrawOutString(string txt, float x, float y, Color col, Color co2, byte space = 2, float scale = 1)
         {
             DrawString(txt, new Vector2(x + space, y), co2, scale);
@@ -531,6 +576,7 @@ namespace PaintKiller
             DrawString(txt, new Vector2(x, y), col, scale);
         }
 
+        /// <summary>Draws a texture with an outline</summary>
         private void DrawOut(Texture2D tex, float x, float y, Color col, byte space = 2, float scale = 1)
         {
             Draw(tex, new Vector2(x + space, y), col, scale);
@@ -549,6 +595,7 @@ namespace PaintKiller
             sb.Draw(tex, pos, null, col, 0, new Vector2(tex.Width * scale / 2, tex.Height * scale / 2), scale, SpriteEffects.None, 0);
         }
 
+        /// <summary>Constructs a controls snapshot from a keyboard state object</summary>
         private Net.Control GetCtrlState(KeyboardState ks)
         {
             float x = (ks.IsKeyDown(Keys.Left) ? -1 : 0) + (ks.IsKeyDown(Keys.Right) ? 1 : 0);
@@ -561,6 +608,7 @@ namespace PaintKiller
             return new Net.Control(x, y, k);
         }
 
+        /// <summary>Constructs a controls snapshot from a gamepad state object</summary>
         private Net.Control GetCtrlState(ExtendedGamePadState gs)
         {
             bool[] k = new bool[8];
