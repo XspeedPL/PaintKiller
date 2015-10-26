@@ -9,6 +9,8 @@ namespace PaintKiller
     {
         private readonly byte[] buffer;
 
+        /// <summary>Calculates the payload's checksum</summary>
+        /// <param name="data">The payload</param>
         private static uint CheckSum(List<byte> data)
         {
             uint ret = 0;
@@ -16,6 +18,8 @@ namespace PaintKiller
             return ret;
         }
 
+        /// <summary>Calculates the payload's checksum, ignores first 4 bytes</summary>
+        /// <param name="data">The payload</param>
         private static uint CheckSum(byte[] data)
         {
             uint ret = 0;
@@ -23,6 +27,9 @@ namespace PaintKiller
             return ret;
         }
 
+        /// <summary>Constructs a packet with the specified payload</summary>
+        /// <param name="type">Packet type</param>
+        /// <param name="data">The payload</param>
         internal static NetPacket Prepare(byte type, List<byte> data)
         {
             data.Insert(0, type);
@@ -30,6 +37,8 @@ namespace PaintKiller
             return new NetPacket(data.ToArray());
         }
 
+        /// <summary>Constructs an empty packet</summary>
+        /// <param name="type">Packet type</param>
         internal static NetPacket Prepare(byte type)
         {
             List<byte> data = new List<byte>();
@@ -38,11 +47,17 @@ namespace PaintKiller
             return new NetPacket(data.ToArray());
         }
 
+        /// <summary>Validates the payload's checksum and constructs a packet</summary>
+        /// <param name="data">The payload</param>
+        /// <returns>A packet object if the payload is vaild, null otherwise</returns>
         internal static NetPacket Get(byte[] data)
         {
             return IsValid(data) ? new NetPacket(data) : null;
         }
 
+        /// <summary>Tests a payload's validity</summary>
+        /// <param name="data">The payload</param>
+        /// <returns>True if the payload's checksum is valid, false otherwise</returns>
         private static bool IsValid(byte[] data)
         {
             if (data.Length < 5) return false;
@@ -67,17 +82,24 @@ namespace PaintKiller
             return ret;
         }
 
+        /// <summary>The data read position offset</summary>
         private int i = 5;
 
+        /// <summary>Gets the whole payload, including checksum and packet type</summary>
         internal byte[] Data { get { return buffer; } }
+
+        /// <summary>Gets the packet type</summary>
         internal byte Type { get { return buffer[4]; } }
+
+        /// <summary>Gets the whole payload length, including checksum and packet type</summary>
         internal int Length { get { return buffer.Length; } }
 
-        public class Writer
+        public class Factory
         {
             private readonly List<byte> buf;
 
-            public Writer(int capacity) { buf = new List<byte>(capacity); }
+            /// <param name="capacity">Expected packet size, in bytes</param>
+            public Factory(int capacity) { buf = new List<byte>(capacity); }
 
             public void WriteByte(byte b) { buf.Add(b); }
             public void WriteShort(short s) { buf.AddRange(BitConverter.GetBytes(s)); }
@@ -92,6 +114,9 @@ namespace PaintKiller
                 buf.AddRange(b);
             }
 
+            /// <summary>Constructs the actual packet from the writen data</summary>
+            /// <param name="type">Packet type</param>
+            /// <returns>A ready packet object</returns>
             public NetPacket GetPacket(byte type) { return NetPacket.Prepare(type, buf); }
         }
     }

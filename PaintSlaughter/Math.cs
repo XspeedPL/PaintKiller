@@ -2,12 +2,13 @@
 
 namespace PaintKiller
 {
+    /// <summary>Unused, but may become useful later</summary>
     internal static class MathHelp
     {
         private const short size = 2048;
         private const float DPI = (float)(Math.PI * 2);
         private const float HPI = (float)(Math.PI / 2);
-        private static readonly float step = DPI / size;
+        private const float step = DPI / size;
         private static float[] sin = new float[size];
 
         internal static void Init()
@@ -20,7 +21,7 @@ namespace PaintKiller
         {
             x %= DPI;
             if (x < 0) x += DPI;
-            return sin[(short)(x / step)];
+            return sin[(int)(x / step)];
         }
 
         public static float Cos(float x)

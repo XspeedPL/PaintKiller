@@ -109,7 +109,10 @@ namespace PaintKiller
         /// <summary>Client instance used only if playing in a multiplayer mode</summary>
         private NetClient client;
 
+        /// <summary>GamePad device manager</summary>
         private InputManager input;
+
+        /// <summary>GamePad interface object</summary>
         private IGamePad pad = null;
 
         /// <summary>Global game instance object</summary>

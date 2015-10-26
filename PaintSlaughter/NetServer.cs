@@ -126,7 +126,7 @@ namespace PaintKiller
         /// <summary>Constructs and broadcasts a list of all connected players in the lobby</summary>
         internal void SendPlrList()
         {
-            NetPacket.Writer data = new NetPacket.Writer(ccount * 5 + 1);
+            NetPacket.Factory data = new NetPacket.Factory(ccount * 5 + 1);
             data.WriteByte(ccount);
             for (byte i = 0; i < ccount; ++i)
             {
@@ -149,7 +149,7 @@ namespace PaintKiller
         /// <param name="objs">Game objects list snapshot</param>
         internal void SendObjs(List<GameObj> objs)
         {
-            NetPacket.Writer data = new NetPacket.Writer(objs.Count * 70 + 20);
+            NetPacket.Factory data = new NetPacket.Factory(objs.Count * 70 + 20);
             data.WriteUInt(GameObj.id);
             data.WriteInt(objs.Count);
             foreach (GameObj go in objs) WriteData(data, go);
@@ -165,7 +165,7 @@ namespace PaintKiller
         /// <summary>Writes data of a single game object into a packet</summary>
         /// <param name="data">The output packet</param>
         /// <param name="go">A game object to extract data from</param>
-        private void WriteData(NetPacket.Writer data, GameObj go)
+        private void WriteData(NetPacket.Factory data, GameObj go)
         {
             data.WriteUInt(go.ID);
             data.WriteString(go.GetType().FullName);

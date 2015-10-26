@@ -123,7 +123,7 @@ namespace PaintKiller
         /// <param name="c">The controls snapshot</param>
         internal void SendKeys(Net.Control c)
         {
-            NetPacket.Writer data = new NetPacket.Writer(9);
+            NetPacket.Factory data = new NetPacket.Factory(9);
             data.WriteFloat(c.X);
             data.WriteFloat(c.Y);
             data.WriteByte(Net.Pack(c.Keys));
