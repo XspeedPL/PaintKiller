@@ -5,6 +5,9 @@ namespace PaintKiller
 {
     static class Collis
     {
+        /// <summary>Applies force to two objects based on their weight and angle between them</summary>
+        /// <param name="g1"></param>
+        /// <param name="g2"></param>
         public static void Handle(GameObj g1, GameObj g2)
         {
             Vector2 v = g1.pos - g2.pos;

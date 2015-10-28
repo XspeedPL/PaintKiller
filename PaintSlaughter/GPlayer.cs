@@ -9,9 +9,16 @@ namespace PaintKiller
 {
     public abstract class GPlayer : GameObj
     {
+        /// <summary>Player's most up to date controls snapshot</summary>
         internal Net.Control keys = new Net.Control(0, 0, Net.Unpack(0)), prev = new Net.Control(0, 0, Net.Unpack(0));
+
+        /// <summary>Player's endpoint</summary>
         internal IPEndPoint ep;
+
+        /// <summary>Counter used for health and magic points regeneration</summary>
         private byte b = 5;
+
+        /// <summary>Player's score</summary>
         public int score;
 
         public GPlayer(uint id) : base(id) { }
@@ -50,10 +57,15 @@ namespace PaintKiller
 
         public override void Kill() { hp = 0; mp = 0; dead = true; }
 
+        /// <summary>Gets the name of this character class</summary>
         public abstract string GetClassName();
 
+        /// <summary>Gets the unique ID of this character class</summary>
         public abstract byte GetClassID();
 
+        /// <summary>Called when this player has dealt damage to an enemy</summary>
+        /// <param name="dmg">Amount of damage dealt</param>
+        /// <param name="ge">The struck enemy</param>
         public abstract void OnStrike(short dmg, GEnemy ge);
     }
 }
