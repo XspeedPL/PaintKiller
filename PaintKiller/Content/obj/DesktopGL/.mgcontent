@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SourceFileCollection xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Profile>Reach</Profile>
+  <Platform>DesktopGL</Platform>
+  <Config />
+  <SourceFiles>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/Arrow.png</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/ArrowD.png</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/ArrowU.png</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/Bar1.png</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/Bar2.png</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/BloodS.png</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/GEKnight.png</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/GEKnightW.png</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/GEnemy.png</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/GEnemyD1.png</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/GEnemyD2.png</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/GEnemyW.png</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/GPArchW1.png</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/GPArchW2.png</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/GPlayer.png</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/GPMageS.png</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/GPMageS1.png</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/GPMageS2.png</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/GPMageW.png</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/GPMageW1.png</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/MenuPause.png</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/Font.spritefont</File>
+    <File>D:/Dropbox/Games C#/PaintKiller/PaintKiller/Content/GPOrcW.png</File>
+  </SourceFiles>
+</SourceFileCollection>
