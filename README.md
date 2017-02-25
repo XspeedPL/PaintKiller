@@ -1,5 +1,6 @@
 # PaintKiller
 A cool game with crappy graphics!
+Up to 4 players multiplayer in cooperative mode!
 
 ## Controls:
 * Menu:
