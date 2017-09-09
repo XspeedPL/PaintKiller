@@ -28,7 +28,7 @@ namespace PaintKilling.Objects
         }
 
         /// <summary>Incremental UID for internal use only</summary>
-        internal static uint uid = 0;
+        internal static uint UID { get; set; }
 
         public GameObj(Vector2 position, short radius)
         {
@@ -38,13 +38,14 @@ namespace PaintKilling.Objects
             MP = GetMaxMP();
             ang = new Vector2(1, 0);
             Radius = radius;
-            ID = uid++;
+            ID = UID++;
         }
 
         /// <summary>Unique ID</summary>
         public uint ID { get; private set; }
 
         public short HP { get; protected set; }
+
         public short MP { get; protected set; }
 
         public State state;
@@ -57,7 +58,7 @@ namespace PaintKilling.Objects
         public bool dead;
 
         /// <summary>Used for circle-based collision detection</summary>
-        public readonly short Radius;
+        public short Radius { get; }
 
         /// <summary>Additional field for object-specific data</summary>
         protected object tag;

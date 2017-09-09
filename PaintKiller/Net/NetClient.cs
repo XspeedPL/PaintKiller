@@ -80,7 +80,7 @@ namespace PaintKilling.Net
                             }
                             break;
                         case NetPacket.PType.CEntList:
-                            GameObj.uid = np.ReadUInt32();
+                            GameObj.UID = np.ReadUInt32();
                             int cnt = np.ReadInt32();
                             EntityList data = new EntityList();
                             for (i = 0; i < cnt; ++i) data.Add(ReadEntData(np));

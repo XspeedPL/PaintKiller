@@ -159,7 +159,7 @@ namespace PaintKilling.Net
         {
             using (NetPacket.Factory data = new NetPacket.Factory(NetPacket.PType.CEntList, objs.Count * 70 + 20))
             {
-                data.Write(GameObj.uid);
+                data.Write(GameObj.UID);
                 data.Write(objs.Count);
                 foreach (GameObj go in objs) WriteData(data, go);
                 data.Write(ClientCount);
