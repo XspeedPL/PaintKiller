@@ -4,7 +4,7 @@ using PaintKilling.Objects;
 namespace PaintKilling.Mechanics.Content
 {
     /// <summary>Specialized List class for faster player and enemy game object lookups</summary>
-    internal sealed class EntityList : UnsafeList<GameObj>
+    internal sealed class EntityList : UnsafeCollection<GameObj>
     {
         private readonly Dictionary<byte, ushort> teamCounts = new Dictionary<byte, ushort>();
 

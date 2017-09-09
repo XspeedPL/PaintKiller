@@ -14,8 +14,8 @@ namespace PaintKilling.Objects.Enemies
         {
             if (state == State.Dying)
             {
-                DrawCentered(sb, PaintKiller.Inst.GetTex("GEnemyD1"), pos, GetColor() * ((40F - frame) / 40), 0, Order.Eyecandy);
-                DrawCentered(sb, PaintKiller.Inst.GetTex("GEnemyD2"), pos, Color.White * ((15F - frame) / 15), 0, Order.Eyecandy);
+                DrawCentered(sb, PaintKiller.Inst.GetTex("GEnemyD1"), pos, GetColor() * ((40F - frame) / 40), 0, Order.EyeCandy);
+                DrawCentered(sb, PaintKiller.Inst.GetTex("GEnemyD2"), pos, Color.White * ((15F - frame) / 15), 0, Order.EyeCandy);
             }
             else DrawCentered(sb, PaintKiller.Inst.GetTex("GEnemy"), pos, GetColor(), 0, Order.Normal);
             if (state == State.Attack || state == State.AtkAfter) DrawCentered(sb, PaintKiller.Inst.GetTex(frame < 15 ? "GPArchW1" : "GPArchW2"), pos, Color.White, dir, Order.Effect, 0.75F);
@@ -63,7 +63,7 @@ namespace PaintKilling.Objects.Enemies
             {
                 if (state == State.Attack && frame > 15)
                 {
-                    PaintKiller.Inst.AddObj(new Projectiles.GPMiniArr(pos + ang * 3, ang, this));
+                    PaintKiller.Inst.AddObj(new Projectiles.GPMiniArrow(pos + ang * 3, ang, this));
                     state = State.AtkAfter;
                 }
                 if (++frame > 35) SetState(0);

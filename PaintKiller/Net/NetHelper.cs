@@ -1,16 +1,18 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 
 namespace PaintKilling.Net
 {
     internal static class NetHelper
     {
-        /// <summary>Global port used throughout the application for network communication</summary>
-        internal static readonly short Port = 10666;
-        
-        /// <summary>Used for locks, separate for out and in traffic</summary>
-        private static readonly object ol = new object(), il = new object();
+        /// <summary>Port used throughout the application for network communication</summary>
+        internal const short Port = 10666;
+
+        /// <summary>Used to synchronize outgoing traffic</summary>
+        private static object OutLock { get; } = new object();
+
+        /// <summary>Used to synchronize incoming traffic</summary>
+        private static object InLock { get; } = new object();
 
         /// <summary>
         /// Sends data synchronously, ignores any exceptions, thread-safe
@@ -21,7 +23,7 @@ namespace PaintKilling.Net
         /// <returns>True on success, false otherwise</returns>
         internal static bool SecureOut(UdpClient sender, NetPacket data, IPEndPoint ep)
         {
-            try { lock (ol) sender.Send(data.Data, data.Length, ep); return true; }
+            try { lock (OutLock) sender.Send(data.Data, data.Length, ep); return true; }
             catch { return false; }
         }
 
@@ -33,7 +35,7 @@ namespace PaintKilling.Net
         /// <returns>A NetPacket on success, null otherwise</returns>
         internal static NetPacket SecureIn(UdpClient sender, ref IPEndPoint ep)
         {
-            try { lock (il) return NetPacket.Get(sender.Receive(ref ep)); }
+            try { lock (InLock) return NetPacket.Get(sender.Receive(ref ep)); }
             catch { return null; }
         }
 
@@ -55,8 +57,8 @@ namespace PaintKilling.Net
             bool[] ret = new bool[8];
             for (byte i = 0; i < 8; ++i)
             {
-                ret[i] = data % 2 == 1;
-                data /= 2;
+                ret[i] = (data & 1) == 1;
+                data >>= 1;
             }
             return ret;
         }

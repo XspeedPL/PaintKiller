@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace PaintKilling.Mechanics.Content
 {
-    public class UnsafeList<T> : IReadOnlyCollection<T>
+    public class UnsafeCollection<T> : IReadOnlyCollection<T>
     {
         public Node First { get; private set; }
         public Node Last { get; private set; }
@@ -19,11 +19,11 @@ namespace PaintKilling.Mechanics.Content
             ++Count;
         }
 
-        public Enumerator GetEnumerator() { return new Enumerator(this); }
+        public Enumerator GetEnumerator() => new Enumerator(this);
 
-        IEnumerator<T> IEnumerable<T>.GetEnumerator() { return GetEnumerator(); }
+        IEnumerator<T> IEnumerable<T>.GetEnumerator() => GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         public virtual void Remove(Node node)
         {
@@ -46,13 +46,13 @@ namespace PaintKilling.Mechanics.Content
 
         public sealed class Enumerator : IEnumerator<T>
         {
-            private readonly UnsafeList<T> list;
+            private readonly UnsafeCollection<T> list;
             private Node node;
 
             public T Current { get { return node.Value; } }
             object IEnumerator.Current { get { return node.Value; } }
 
-            public Enumerator(UnsafeList<T> source)
+            public Enumerator(UnsafeCollection<T> source)
             {
                 list = source;
                 Reset();

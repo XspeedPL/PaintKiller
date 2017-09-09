@@ -49,7 +49,7 @@ namespace PaintKilling.Objects.Projectiles
             if (go != null)
             {
                 PaintKiller.Inst.AddBlood(this, go);
-                shooter.OnStrike(go.Hit(10), go);
+                Shooter.OnStrike(go.Hit(10), go);
                 go.Knockback(pos, GetWeight());
                 list.Add(go);
                 HP -= 18;

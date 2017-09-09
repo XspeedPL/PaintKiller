@@ -25,10 +25,12 @@ namespace PaintKilling
             public ErrorDisplay(Exception ex)
             {
                 data = ex;
-                GraphicsDeviceManager graphics = new GraphicsDeviceManager(this);
-                graphics.IsFullScreen = false;
-                graphics.PreferredBackBufferHeight = 800;
-                graphics.PreferredBackBufferWidth = 600;
+                GraphicsDeviceManager graphics = new GraphicsDeviceManager(this)
+                {
+                    IsFullScreen = false,
+                    PreferredBackBufferWidth = 800,
+                    PreferredBackBufferHeight = 600
+                };
                 Content.RootDirectory = "Content";
             }
 

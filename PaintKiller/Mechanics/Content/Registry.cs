@@ -19,7 +19,7 @@ namespace PaintKilling.Mechanics.Content
             Register(empty);
             Register(new GPArc(Vector2.Zero, Vector2.Zero, empty));
             Register(new GPArrow(Vector2.Zero, Vector2.Zero, empty));
-            Register(new GPMiniArr(Vector2.Zero, Vector2.Zero, empty));
+            Register(new GPMiniArrow(Vector2.Zero, Vector2.Zero, empty));
             Register(new GPChain(Vector2.Zero, empty, empty, new List<GameObj>()));
             Register(new GPPiercing(Vector2.Zero, Vector2.Zero, empty));
             Register(new GPRain(Vector2.Zero, Vector2.Zero, empty));

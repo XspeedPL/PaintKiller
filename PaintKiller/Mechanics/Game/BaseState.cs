@@ -10,16 +10,16 @@ namespace PaintKilling.Mechanics.Game
     {
         public event System.Action<BaseState> Resetting;
 
-        protected UnsafeList<Component> Components { get; private set; }
+        protected UnsafeCollection<Component> Components { get; private set; }
 
-        protected UnsafeList<Component>.Node Focused { get; set; }
+        protected UnsafeCollection<Component>.Node Focused { get; set; }
 
         public string Name { get; private set; }
 
         public BaseState(string name)
         {
-            Components = new UnsafeList<Component>();
-            Focused = new UnsafeList<Component>.Node(null);
+            Components = new UnsafeCollection<Component>();
+            Focused = new UnsafeCollection<Component>.Node(null);
             Name = name;
         }
 

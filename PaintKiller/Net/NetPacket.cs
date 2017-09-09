@@ -5,13 +5,13 @@ namespace PaintKilling.Net
 {
     internal sealed class NetPacket : BinaryReader
     {
-        internal enum Types : byte
+        internal enum PType : byte
         {
             SLobbyJoin = 0, SControls, SDisconnect,
             CLobbyConnect, CEntList, CGameEnd, CLobbyJoin, CPause
         }
 
-        private readonly byte[] buffer;
+        private byte[] Buffer { get; }
 
         /// <summary>Calculates the payload's checksum, ignores first 4 bytes</summary>
         /// <param name="data">The payload</param>
@@ -24,7 +24,7 @@ namespace PaintKilling.Net
 
         /// <summary>Constructs an empty packet</summary>
         /// <param name="type">Packet type</param>
-        internal static NetPacket Prepare(Types type)
+        internal static NetPacket Prepare(PType type)
         {
             byte[] data = new byte[5];
             data[4] = (byte)type;
@@ -49,31 +49,28 @@ namespace PaintKilling.Net
             return BitConverter.ToUInt32(data, 0) == CheckSum(data);
         }
 
-        private NetPacket(byte[] data) : base(new MemoryStream(data)) { buffer = data; BaseStream.Seek(5, SeekOrigin.Current); }
+        private NetPacket(byte[] data) : base(new MemoryStream(data)) { Buffer = data; BaseStream.Seek(5, SeekOrigin.Current); }
 
         /// <summary>Gets the whole payload, including checksum and packet type</summary>
-        internal byte[] Data { get { return buffer; } }
+        internal byte[] Data => Buffer;
 
         /// <summary>Gets the packet type</summary>
-        internal Types Type { get { return (Types)buffer[4]; } }
+        internal PType Type => (PType)Buffer[4];
 
         /// <summary>Gets the whole payload length, including checksum and packet type</summary>
-        internal int Length { get { return buffer.Length; } }
+        internal int Length => Buffer.Length;
 
         internal sealed class Factory : BinaryWriter
         {
             /// <param name="type">Packet type</param>
             /// <param name="capacity">Expected packet size, in bytes</param>
-            public Factory(Types type, int capacity) : base(new MemoryStream(capacity + 5))
+            public Factory(PType type, int capacity) : base(new MemoryStream(capacity + 5))
             {
                 Write(int.MaxValue);
                 Write((byte)type);
             }
 
-            private byte[] GetData()
-            {
-                return ((MemoryStream)BaseStream).ToArray();
-            }
+            private byte[] GetData() => ((MemoryStream)BaseStream).ToArray();
 
             /// <summary>Constructs the actual packet from the writen data</summary>
             /// <param name="type">Packet type</param>

@@ -36,7 +36,7 @@ namespace PaintKilling.Objects.Projectiles
                 {
                     int offset = Math.Abs(i) * 6 + (HP - 35);
                     Vector2 a = new Vector2(ang.Y * i * 32 - ang.X * offset * 3.5F, -ang.X * i * 32 - ang.Y * offset * 3.5F);
-                    PaintKiller.Inst.AddObj(new GPRainA(a + pos, ang, shooter));
+                    PaintKiller.Inst.AddObj(new GPRainA(a + pos, ang, Shooter));
                 }
             }
         }
@@ -71,7 +71,7 @@ namespace PaintKilling.Objects.Projectiles
                 Texture2D arrow = PaintKiller.Inst.GetTex("ArrowD");
                 if (HP > 25) DrawCentered(sb, arrow, pos, GetColor() * ((45F - HP) / 20), dir, Order.Midair, HP * 0.075F + 0.125F);
                 else if (HP > 5) DrawCentered(sb, arrow, pos, GetColor(), dir, Order.Midair, HP * 0.075F + 0.125F);
-                else DrawCentered(sb, arrow, pos, GetColor() * (HP / 5F), dir, Order.Eyecandy, 0.5F);
+                else DrawCentered(sb, arrow, pos, GetColor() * (HP / 5F), dir, Order.EyeCandy, 0.5F);
             }
 
             public override void Update()
@@ -83,7 +83,7 @@ namespace PaintKilling.Objects.Projectiles
                     if (go != null)
                     {
                         PaintKiller.Inst.AddBlood(this, go);
-                        shooter.OnStrike(go.Hit(15), go);
+                        Shooter.OnStrike(go.Hit(15), go);
                         go.Knockback(pos, GetWeight());
                         frame = 1;
                     }

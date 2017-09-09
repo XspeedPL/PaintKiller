@@ -52,7 +52,7 @@ namespace PaintKilling.Objects
                     s = (i + 1).ToString();
                     break;
                 }
-            sb.DrawString(PaintKiller.Font, s, pos - new Vector2(Radius, Radius), Color.Black, 0, Vector2.Zero, 0.7F, SpriteEffects.None, (float)Order.Normal / (float)Order.MAX);
+            sb.DrawString(PaintKiller.Font, s, pos - new Vector2(Radius, Radius), Color.Black, 0, Vector2.Zero, 0.7F, SpriteEffects.None, (float)Order.Normal / (float)Order.Max);
         }
 
         public override void Kill() { HP = 0; MP = 0; dead = true; }

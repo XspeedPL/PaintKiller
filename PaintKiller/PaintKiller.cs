@@ -31,7 +31,7 @@ namespace PaintKilling
         private EntityList objs = new EntityList();
 
         /// <summary>New game objects to be added on the next game tick</summary>
-        private readonly UnsafeList<GameObj> queue = new UnsafeList<GameObj>();
+        private readonly UnsafeCollection<GameObj> queue = new UnsafeCollection<GameObj>();
 
         /// <summary>Game-wide used single font</summary>
         public static SpriteFont Font { get; internal set; }
@@ -71,10 +71,12 @@ namespace PaintKilling
 
         public PaintKiller()
         {
-            graphics = new GraphicsDeviceManager(this);
-            graphics.IsFullScreen = false;
-            graphics.PreferredBackBufferHeight = 600;
-            graphics.PreferredBackBufferWidth = 800;
+            graphics = new GraphicsDeviceManager(this)
+            {
+                IsFullScreen = false,
+                PreferredBackBufferWidth = 800,
+                PreferredBackBufferHeight = 600
+            };
             Content.RootDirectory = "Content";
             Inst = this;
         }
@@ -187,7 +189,7 @@ namespace PaintKilling
                 Label l = new Label() { Position = new Vector2(x * -80, y * -35), Scale = 0.75F, VerticalAlign = (Component.VAlign)(y + 1) };
                 l.HorzontalAlign = l.TextAlign = (Component.HAlign)(x + 1);
                 bs.AddComponent(l);
-                bs.AddComponent(new PlayerInfo() { Array = P, Index = i, Position = new Vector2(x * -40, y * -65), VerticalAlign = l.VerticalAlign, HorzontalAlign = l.HorzontalAlign, Score = l });
+                bs.AddComponent(new PlayerInfo(P, i, l) { Position = new Vector2(x * -40, y * -65), VerticalAlign = l.VerticalAlign, HorzontalAlign = l.HorzontalAlign });
             }       
             bs.AddComponent(new Image() { HorzontalAlign = Component.HAlign.Center, Texture = GetTex("MenuPause"), VerticalAlign = Component.VAlign.Center, ID = 1 });
             bs.Resetting += (state) => state.FindByID(1).Enabled = GameState == GameStates.PAUSE;
@@ -211,8 +213,7 @@ namespace PaintKilling
                 if (c.ID == 5) ipIn.Text = "";
                 else if (c.ID == 6)
                 {
-                    IPAddress ip;
-                    if (IPAddress.TryParse(ipIn.Text, out ip))
+                    if (IPAddress.TryParse(ipIn.Text, out IPAddress ip))
                     {
                         ipIn.Text = "Connecting...";
                         ipIn.ReadOnly = true;
@@ -303,7 +304,7 @@ namespace PaintKilling
             Controls ctrl = usePad ? GamePad.GetState(PlayerIndex.One).GetCtrlState() : Keyboard.GetState().GetCtrlState();
             ctrl.SetPrev(pctrl);
             states[GameState].Update(ctrl);
-            if (ctrl.IsFirstPress(Controls.KEY_ESC))
+            if (ctrl.IsFirstPress(Controls.Key_Escape))
             {
                 if (GameState == GameStates.GAME || GameState == GameStates.PAUSE)
                 {
@@ -315,7 +316,7 @@ namespace PaintKilling
                 }
                 else Exit();
             }
-            else if (ctrl.IsFirstPress(Controls.KEY_RETURN) && GameState != GameStates.GAME) Return();
+            else if (ctrl.IsFirstPress(Controls.Key_Return) && GameState != GameStates.GAME) Return();
             else if (GameState == GameStates.GAME)
             {
                 if (side == NetSide.Client) client.SendKeys(ctrl);
@@ -325,7 +326,7 @@ namespace PaintKilling
                     if (enes < 1 || --spawn < 1)
                     {
                         spawn = 100;
-                        int plrs = server == null ? 1 : server.ccount;
+                        int plrs = server == null ? 1 : server.ClientCount;
                         for (int i = enes; i < 10 + 4 * plrs; ++i)
                         {
                             GameObj enemy;
@@ -340,7 +341,7 @@ namespace PaintKilling
                     }
                     P[0].keys = ctrl;
                     LinkedList<GameObj> tmp = new LinkedList<GameObj>(objs);
-                    UnsafeList<GameObj>.Enumerator en;
+                    UnsafeCollection<GameObj>.Enumerator en;
                     using (en = objs.GetEnumerator())
                         while (en.MoveNext())
                         {

@@ -120,7 +120,7 @@ namespace PaintKilling.Objects.Players
                 Texture2D weap = PaintKiller.Inst.GetTex("GPOrcW");
                 DrawCentered(sb, weap, pos, Color.White, dir + wdir, Order.Effect);
                 if (state == State.Sp2Atk)
-                    sb.Draw(weap, pos, null, Color.White, dir - wdir, new Vector2(weap.Width / 2, weap.Height / 2), 1, SpriteEffects.FlipVertically, (float)Order.Effect / (float)Order.MAX);
+                    sb.Draw(weap, pos, null, Color.White, dir - wdir, new Vector2(weap.Width / 2, weap.Height / 2), 1, SpriteEffects.FlipVertically, (float)Order.Effect / (float)Order.Max);
             }
         }
     }

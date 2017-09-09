@@ -5,10 +5,13 @@ namespace PaintKilling.Net
     /// <summary>A class for storing player controls state</summary>
     public sealed class Controls
     {
-        public const int KEY_RETURN = 6, KEY_ESC = 7;
+        public const int Key_Return = 6, Key_Escape = 7;
 
-        public readonly float X, Y;
-        public readonly bool[] Keys;
+        public float X { get; }
+
+        public float Y { get; }
+
+        public bool[] Keys { get; }
 
         public Controls Prev { get; private set; }
 

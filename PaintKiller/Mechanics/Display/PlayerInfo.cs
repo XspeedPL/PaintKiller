@@ -6,17 +6,17 @@ namespace PaintKilling.Mechanics.Display
 {
     public class PlayerInfo : Component
     {
-        public GPlayer[] Array { get; set; }
+        public GPlayer[] Array { get; }
 
-        public int Index { get; set; }
+        public int Index { get; }
 
-        public Label Score { get; set; }
+        public Label Score { get; }
 
-        public PlayerInfo()
+        public PlayerInfo(GPlayer[] plrArray, int plrIndex, Label score)
         {
-            Array = new GPlayer[1];
-            Index = 0;
-            Score = new Label();
+            Array = plrArray;
+            Index = plrIndex;
+            Score = score;
         }
 
         protected override void OnDraw(SpriteBatch sb, Vector2 pos, bool focus)

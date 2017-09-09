@@ -11,90 +11,90 @@ namespace PaintKilling.Net
 {
     internal sealed class NetServer : IDisposable
     {
-        private readonly PaintKiller game;
-        private UdpClient server;
+        private PaintKiller Game { get; }
+
+        private UdpClient Socket { get; set; }
 
         /// <summary>Connected clients count</summary>
-        internal byte ccount = 1;
+        internal byte ClientCount { get; private set; } = 1;
 
         /// <summary>Packet read thread worker</summary>
-        private readonly BackgroundWorker bgw = new BackgroundWorker() { WorkerSupportsCancellation = true };
-
-
+        private BackgroundWorker Worker { get; } = new BackgroundWorker() { WorkerSupportsCancellation = true };
+        
         internal NetServer(PaintKiller inst)
         {
-            game = inst;
-            bgw.DoWork += bgw_DoWork;
-            bgw.RunWorkerAsync();
+            Game = inst;
+            Worker.DoWork += Worker_DoWork;
+            Worker.RunWorkerAsync();
         }
 
-        private void bgw_DoWork(object sender, DoWorkEventArgs e)
+        private void Worker_DoWork(object sender, DoWorkEventArgs e)
         {
-            server = new UdpClient(new IPEndPoint(IPAddress.Any, NetHelper.Port));
-            server.Client.ReceiveTimeout = 2000;
-            server.Client.SendTimeout = 2000;
-            while (!bgw.CancellationPending)
+            Socket = new UdpClient(new IPEndPoint(IPAddress.Any, NetHelper.Port));
+            Socket.Client.ReceiveTimeout = 2000;
+            Socket.Client.SendTimeout = 2000;
+            while (!Worker.CancellationPending)
                 Read();
         }
 
         public void Dispose()
         {
-            bgw.CancelAsync();
-            server.Close();
-            bgw.Dispose();
+            Worker.CancelAsync();
+            Socket.Close();
+            Worker.Dispose();
         }
 
         /// <summary>Reads a packet from any source and processes it</summary>
         private void Read()
         {
             IPEndPoint ep = new IPEndPoint(IPAddress.Any, NetHelper.Port);
-            using (NetPacket np = NetHelper.SecureIn(server, ref ep))
+            using (NetPacket np = NetHelper.SecureIn(Socket, ref ep))
                 if (np != null)
                 {
-                    GPlayer gp = game.GetPlr(ep);
+                    GPlayer gp = Game.GetPlr(ep);
                     switch (np.Type)
                     {
-                        case NetPacket.Types.SLobbyJoin:
-                            if (game.GameState == PaintKiller.GameStates.LOBBY && ccount < 4 && gp == null)
+                        case NetPacket.PType.SLobbyJoin:
+                            if (Game.GameState == PaintKiller.GameStates.LOBBY && ClientCount < 4 && gp == null)
                             {
                                 byte cls = np.ReadByte();
-                                lock (game.P)
+                                lock (Game.P)
                                 {
-                                    if (cls == 0) game.P[ccount] = new GPOrc(new Vector2(50 + ccount * 10, 150));
-                                    else if (cls == 1) game.P[ccount] = new GPMage(new Vector2(50 + ccount * 10, 150));
-                                    else if (cls == 2) game.P[ccount] = new GPArch(new Vector2(50 + ccount * 10, 150));
-                                    game.P[ccount].EP = ep;
+                                    if (cls == 0) Game.P[ClientCount] = new GPOrc(new Vector2(50 + ClientCount * 10, 150));
+                                    else if (cls == 1) Game.P[ClientCount] = new GPMage(new Vector2(50 + ClientCount * 10, 150));
+                                    else if (cls == 2) Game.P[ClientCount] = new GPArch(new Vector2(50 + ClientCount * 10, 150));
+                                    Game.P[ClientCount].EP = ep;
                                 }
-                                using (NetPacket.Factory npf = new NetPacket.Factory(NetPacket.Types.CLobbyConnect, 4))
+                                using (NetPacket.Factory npf = new NetPacket.Factory(NetPacket.PType.CLobbyConnect, 4))
                                 {
-                                    npf.Write(game.P[ccount++].ID);
+                                    npf.Write(Game.P[ClientCount++].ID);
                                     using (NetPacket np_out = npf.GetPacket()) Send(np_out, ep);
                                 }
                                 SendPlrList();
                             }
-                            else if (game.GetPlr(ep) == null) Send(NetPacket.Prepare(NetPacket.Types.CGameEnd), ep);
+                            else if (Game.GetPlr(ep) == null) Send(NetPacket.Prepare(NetPacket.PType.CGameEnd), ep);
                             break;
-                        case NetPacket.Types.SControls:
-                            if (game.GameState == PaintKiller.GameStates.GAME && gp != null)
+                        case NetPacket.PType.SControls:
+                            if (Game.GameState == PaintKiller.GameStates.GAME && gp != null)
                                 gp.keys = new Controls(np.ReadSingle(), np.ReadSingle(), np.ReadByte().Unpack());
                             break;
-                        case NetPacket.Types.SDisconnect:
+                        case NetPacket.PType.SDisconnect:
                             if (gp != null)
                             {
                                 gp.Kill();
-                                if (game.GameState != PaintKiller.GameStates.GAME && game.GameState != PaintKiller.GameStates.PAUSE)
+                                if (Game.GameState != PaintKiller.GameStates.GAME && Game.GameState != PaintKiller.GameStates.PAUSE)
                                 {
                                     byte i;
-                                    lock (game.P)
+                                    lock (Game.P)
                                     {
                                         for (i = 1; i < 4; ++i)
-                                            if (game.P[i] == gp)
-                                                game.P[i] = null;
-                                        --ccount;
-                                        if (i < ccount)
+                                            if (Game.P[i] == gp)
+                                                Game.P[i] = null;
+                                        --ClientCount;
+                                        if (i < ClientCount)
                                         {
-                                            game.P[i] = game.P[ccount];
-                                            game.P[ccount] = null;
+                                            Game.P[i] = Game.P[ClientCount];
+                                            Game.P[ClientCount] = null;
                                         }
                                     }
                                 }
@@ -109,8 +109,8 @@ namespace PaintKilling.Net
         private void Broadcast(NetPacket np)
         {
             for (int i = 1; i < 4; ++i)
-                if (game.P[i] != null)
-                    Send(np, game.P[i].EP);
+                if (Game.P[i] != null)
+                    Send(np, Game.P[i].EP);
         }
 
         /// <summary>Sends a packet to a specific endpoint</summary>
@@ -118,25 +118,25 @@ namespace PaintKilling.Net
         /// <param name="ep">Client's endpoint</param>
         private void Send(NetPacket np, IPEndPoint ep)
         {
-            NetHelper.SecureOut(server, np, ep);
+            NetHelper.SecureOut(Socket, np, ep);
         }
 
         /// <summary>Broadcasts a sever termination event packet</summary>
         internal void SendEnd()
         {
-            Broadcast(NetPacket.Prepare(NetPacket.Types.CGameEnd));
+            Broadcast(NetPacket.Prepare(NetPacket.PType.CGameEnd));
         }
 
         /// <summary>Constructs and broadcasts a list of all connected players in the lobby</summary>
         internal void SendPlrList()
         {
-            using (NetPacket.Factory data = new NetPacket.Factory(NetPacket.Types.CLobbyJoin, ccount * 5 + 1))
+            using (NetPacket.Factory data = new NetPacket.Factory(NetPacket.PType.CLobbyJoin, ClientCount * 5 + 1))
             {
-                data.Write(ccount);
-                for (byte i = 0; i < ccount; ++i)
+                data.Write(ClientCount);
+                for (byte i = 0; i < ClientCount; ++i)
                 {
-                    data.Write(game.P[i].ID);
-                    data.Write(game.P[i].GetClassID());
+                    data.Write(Game.P[i].ID);
+                    data.Write(Game.P[i].GetClassID());
                 }
                 using (NetPacket np = data.GetPacket()) Broadcast(np);
             }
@@ -146,7 +146,7 @@ namespace PaintKilling.Net
         /// <param name="pause">True if the new state is a pause, false otherwise</param>
         internal void SendGame(bool pause)
         {
-            using (NetPacket.Factory npf = new NetPacket.Factory(NetPacket.Types.CPause, 1))
+            using (NetPacket.Factory npf = new NetPacket.Factory(NetPacket.PType.CPause, 1))
             {
                 npf.Write(pause ? (byte)1 : (byte)0);
                 using (NetPacket np = npf.GetPacket()) Broadcast(np);
@@ -157,16 +157,16 @@ namespace PaintKilling.Net
         /// <param name="objs">Game objects list snapshot</param>
         internal void SendObjs(IReadOnlyCollection<GameObj> objs)
         {
-            using (NetPacket.Factory data = new NetPacket.Factory(NetPacket.Types.CEntList, objs.Count * 70 + 20))
+            using (NetPacket.Factory data = new NetPacket.Factory(NetPacket.PType.CEntList, objs.Count * 70 + 20))
             {
                 data.Write(GameObj.uid);
                 data.Write(objs.Count);
                 foreach (GameObj go in objs) WriteData(data, go);
-                data.Write(ccount);
-                for (byte i = 0; i < ccount; ++i)
+                data.Write(ClientCount);
+                for (byte i = 0; i < ClientCount; ++i)
                 {
-                    data.Write(game.P[i].ID);
-                    data.Write(game.P[i].Score);
+                    data.Write(Game.P[i].ID);
+                    data.Write(Game.P[i].Score);
                 }
                 using (NetPacket np = data.GetPacket()) Broadcast(np);
             }

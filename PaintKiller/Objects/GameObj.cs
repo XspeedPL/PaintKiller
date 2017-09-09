@@ -22,6 +22,7 @@ namespace PaintKilling.Objects
         public GameObj Clone(uint id)
         {
             GameObj ret = (GameObj)MemberwiseClone();
+            ret.ID = id;
             ret.CloneSpecial(this);
             return ret;
         }

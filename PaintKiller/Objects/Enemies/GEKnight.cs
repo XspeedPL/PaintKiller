@@ -15,8 +15,8 @@ namespace PaintKilling.Objects.Enemies
             Texture2D player = PaintKiller.Inst.GetTex("GPlayer");
             if (state == State.Dying)
             {
-                DrawCentered(sb, PaintKiller.Inst.GetTex("GEKnightW"), new Vector2(pos.X, pos.Y - 35), Color.White * ((40F - frame) / 20), 2.35F, Order.Eyecandy, 0.75F);
-                DrawCentered(sb, player, pos, GetColor() * ((25F - frame) / 25), 0, Order.Eyecandy, 1.2F);
+                DrawCentered(sb, PaintKiller.Inst.GetTex("GEKnightW"), new Vector2(pos.X, pos.Y - 35), Color.White * ((40F - frame) / 20), 2.35F, Order.EyeCandy, 0.75F);
+                DrawCentered(sb, player, pos, GetColor() * ((25F - frame) / 25), 0, Order.EyeCandy, 1.2F);
             }
             else DrawCentered(sb, player, pos, GetColor(), 0, Order.Normal, 1.2F);
             if ((state == State.Attack && frame > 10) || state == State.AtkAfter) DrawCentered(sb, PaintKiller.Inst.GetTex("GEKnightW"), pos, Color.White, dir + (frame - 16) / 10F, Order.Effect, 0.75F);

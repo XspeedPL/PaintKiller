@@ -44,7 +44,7 @@ namespace PaintKilling.Objects.Projectiles
             GameObj go = FindClosestEnemy(this, true, float.MaxValue, (System.Collections.Generic.ICollection<GameObj>)tag);
             if (go != null)
             {
-                shooter.OnStrike(go.Hit(3), go);
+                Shooter.OnStrike(go.Hit(3), go);
                 go.Knockback(pos, GetWeight());
                 go.SetState(State.Frozen);
                 if (tag != null) Kill();

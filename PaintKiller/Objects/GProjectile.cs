@@ -5,11 +5,11 @@ namespace PaintKilling.Objects
 {
     public abstract class GProjectile : GameObj
     {
-        public readonly GameObj shooter;
+        public GameObj Shooter { get; }
         
         public GProjectile(Vector2 position, short radius, Vector2 direction, GameObj shoot) : base(position, radius)
         {
-            spd = direction; shooter = shoot; team = shoot.team; SetAngle(direction);
+            spd = direction; Shooter = shoot; team = shoot.team; SetAngle(direction);
         }
 
         public sealed override short GetMaxMP() { return short.MaxValue; }

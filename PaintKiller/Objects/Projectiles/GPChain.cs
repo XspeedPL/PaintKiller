@@ -8,16 +8,17 @@ namespace PaintKilling.Objects.Projectiles
 {
     public class GPChain : GProjectile
     {
-        private readonly GameObj tar;
+        private GameObj Target { get; }
+
         private LightningBolt bolt;
 
-        public GPChain(Vector2 position, GameObj shoot, GameObj target, List<GameObj> list) : base(position, 14, Vector2.Zero, shoot)
+        public GPChain(Vector2 position, GameObj shoot, GameObj target, ICollection<GameObj> list) : base(position, 14, Vector2.Zero, shoot)
         {
             MP = (short)list.Count;
-            tar = target;
-            list.Add(tar);
+            Target = target;
+            list.Add(Target);
             tag = list;
-            SetBolt(tar.pos);
+            SetBolt(Target.pos);
         }
 
         internal void SetBolt(Vector2 target) { bolt = new LightningBolt(pos, target, 2 - MP / 8F); }
@@ -48,21 +49,21 @@ namespace PaintKilling.Objects.Projectiles
         public override void Update()
         {
             base.Update();
-            SetBolt(tar.pos);
+            SetBolt(Target.pos);
             if (++frame == 2)
             {
-                shooter.OnStrike(tar.Hit(16), tar);
-                PaintKiller.Inst.AddBlood(this, tar);
+                Shooter.OnStrike(Target.Hit(16), Target);
+                PaintKiller.Inst.AddBlood(this, Target);
             }
             else
             {
-                List<GameObj> list = (List<GameObj>)tag;
+                ICollection<GameObj> list = (ICollection<GameObj>)tag;
                 if (frame == 6 && list.Count < 8)
                 {
                     GameObj go = FindClosestEnemy(null, true, 175 * 175, list);
-                    if (go != null) PaintKiller.Inst.AddObj(new GPChain(tar.pos, shooter, go, list));
+                    if (go != null) PaintKiller.Inst.AddObj(new GPChain(Target.pos, Shooter, go, list));
                 }
-                else if (frame == 11) tar.Knockback(pos, 4);
+                else if (frame == 11) Target.Knockback(pos, 4);
             }
         }
 
@@ -71,15 +72,15 @@ namespace PaintKilling.Objects.Projectiles
             SetBolt(((GPChain)src).bolt.End);
         }
 
-        public override void ReadSpecial(BinaryReader br)
+        public override void ReadSpecial(BinaryReader reader)
         {
-            SetBolt(new Vector2(br.ReadSingle(), br.ReadSingle()));
+            SetBolt(new Vector2(reader.ReadSingle(), reader.ReadSingle()));
         }
 
-        public override void WriteSpecial(BinaryWriter bw)
+        public override void WriteSpecial(BinaryWriter writer)
         {
-            bw.Write(bolt.End.X);
-            bw.Write(bolt.End.Y);
+            writer.Write(bolt.End.X);
+            writer.Write(bolt.End.Y);
         }
 
         private class LightningBolt
@@ -106,8 +107,7 @@ namespace PaintKilling.Objects.Projectiles
                 Vector2 normal = Vector2.Normalize(new Vector2(tangent.Y, -tangent.X));
                 float length = tangent.Length();
 
-                List<float> positions = new List<float>();
-                positions.Add(0);
+                List<float> positions = new List<float> { 0 };
 
                 for (int i = 0; i < length / 4; i++)
                     positions.Add(Rand(0, 1));
@@ -176,7 +176,7 @@ namespace PaintKilling.Objects.Projectiles
                     Vector2 middleOrigin = new Vector2(0, t2.Height / 2f);
                     Vector2 middleScale = new Vector2(tangent.Length(), thicknessScale);
 
-                    float depth = (float)Order.Effect / (float)Order.MAX;
+                    float depth = (float)Order.Effect / (float)Order.Max;
                     sb.Draw(t2, A, null, tint, theta, middleOrigin, middleScale, SpriteEffects.None, depth);
                     sb.Draw(t1, A, null, tint, theta, capOrigin, thicknessScale, SpriteEffects.None, depth);
                     sb.Draw(t1, B, null, tint, theta + MathHelper.Pi, capOrigin, thicknessScale, SpriteEffects.None, depth);

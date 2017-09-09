@@ -14,8 +14,8 @@ namespace PaintKilling.Objects.Enemies
         {
             if (state == State.Dying)
             {
-                DrawCentered(sb, PaintKiller.Inst.GetTex("GEnemyD1"), pos, GetColor() * ((40F - frame) / 40), 0, Order.Eyecandy);
-                DrawCentered(sb, PaintKiller.Inst.GetTex("GEnemyD2"), pos, Color.White * ((15F - frame) / 15), 0, Order.Eyecandy);
+                DrawCentered(sb, PaintKiller.Inst.GetTex("GEnemyD1"), pos, GetColor() * ((40F - frame) / 40), 0, Order.EyeCandy);
+                DrawCentered(sb, PaintKiller.Inst.GetTex("GEnemyD2"), pos, Color.White * ((15F - frame) / 15), 0, Order.EyeCandy);
             }
             else DrawCentered(sb, PaintKiller.Inst.GetTex("GEnemy"), pos, GetColor(), 0, Order.Normal);
             if (((state == State.Attack || state == State.Sp1Atk) && frame > 10) || state == State.AtkAfter)

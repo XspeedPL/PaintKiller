@@ -42,7 +42,7 @@ namespace PaintKilling.Objects.Projectiles
             if (go != null)
             {
                 PaintKiller.Inst.AddBlood(this, go);
-                shooter.OnStrike(go.Hit(6), go);
+                Shooter.OnStrike(go.Hit(6), go);
                 go.Knockback(pos, GetWeight());
                 Kill();
             }

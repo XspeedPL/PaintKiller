@@ -7,9 +7,9 @@ using PaintKilling.Net;
 namespace PaintKilling
 {
     /// <summary>Display order enum</summary>
-    public enum Order : byte
+    public enum Order
     {
-        UI = 0, BackUI, Midair, Effect, Normal, Eyecandy, Background, MAX
+        UI = 0, BackUI, Midair, Effect, Normal, EyeCandy, Background, Max
     }
 
     public static class Helpers
@@ -24,16 +24,16 @@ namespace PaintKilling
                 sin[i] = (float)Math.Sin(i * step);
         }
 
-        public static float Sin(float x)
+        public static float Sin(float a)
         {
-            x %= MathHelper.TwoPi;
-            if (x < 0) x += MathHelper.TwoPi;
-            return sin[(int)(x / step)];
+            a %= MathHelper.TwoPi;
+            if (a < 0) a += MathHelper.TwoPi;
+            return sin[(int)(a / step)];
         }
 
-        public static float Cos(float x)
+        public static float Cos(float a)
         {
-            return Sin(MathHelper.PiOver2 - x);
+            return Sin(MathHelper.PiOver2 - a);
         }
 
         public static Vector2 RotateBy(this Vector2 v, float angle)
@@ -43,31 +43,31 @@ namespace PaintKilling
         }
 
         /// <summary>Constructs a controls snapshot from a keyboard state object</summary>
-        public static Controls GetCtrlState(this KeyboardState ks)
+        public static Controls GetCtrlState(this KeyboardState keyState)
         {
-            float x = (ks.IsKeyDown(Keys.Left) ? -1 : 0) + (ks.IsKeyDown(Keys.Right) ? 1 : 0);
-            float y = (ks.IsKeyDown(Keys.Up) ? -1 : 0) + (ks.IsKeyDown(Keys.Down) ? 1 : 0);
+            float x = (keyState.IsKeyDown(Keys.Left) ? -1 : 0) + (keyState.IsKeyDown(Keys.Right) ? 1 : 0);
+            float y = (keyState.IsKeyDown(Keys.Up) ? -1 : 0) + (keyState.IsKeyDown(Keys.Down) ? 1 : 0);
             bool[] k = new bool[8];
-            k[0] = ks.IsKeyDown(Keys.F);
-            k[1] = ks.IsKeyDown(Keys.G);
-            k[2] = ks.IsKeyDown(Keys.H);
-            k[3] = ks.IsKeyDown(Keys.T);
-            k[6] = ks.IsKeyDown(Keys.F1);
-            k[7] = ks.IsKeyDown(Keys.Escape);
+            k[0] = keyState.IsKeyDown(Keys.F);
+            k[1] = keyState.IsKeyDown(Keys.G);
+            k[2] = keyState.IsKeyDown(Keys.H);
+            k[3] = keyState.IsKeyDown(Keys.T);
+            k[6] = keyState.IsKeyDown(Keys.F1);
+            k[7] = keyState.IsKeyDown(Keys.Escape);
             return new Controls(x, y, k);
         }
 
         /// <summary>Constructs a controls snapshot from a gamepad state object</summary>
-        public static Controls GetCtrlState(this GamePadState gs)
+        public static Controls GetCtrlState(this GamePadState padState)
         {
             bool[] k = new bool[8];
-            k[0] = gs.IsButtonDown(Buttons.X);
-            k[1] = gs.IsButtonDown(Buttons.A);
-            k[2] = gs.IsButtonDown(Buttons.B);
-            k[3] = gs.IsButtonDown(Buttons.Y);
-            k[6] = gs.IsButtonDown(Buttons.Start);
-            k[7] = gs.IsButtonDown(Buttons.Back);
-            return new Controls(gs.ThumbSticks.Left.X, gs.ThumbSticks.Left.Y, k);
+            k[0] = padState.IsButtonDown(Buttons.X);
+            k[1] = padState.IsButtonDown(Buttons.A);
+            k[2] = padState.IsButtonDown(Buttons.B);
+            k[3] = padState.IsButtonDown(Buttons.Y);
+            k[6] = padState.IsButtonDown(Buttons.Start);
+            k[7] = padState.IsButtonDown(Buttons.Back);
+            return new Controls(padState.ThumbSticks.Left.X, padState.ThumbSticks.Left.Y, k);
         }
 
         /// <summary>Draws a string with an outline</summary>
@@ -92,17 +92,17 @@ namespace PaintKilling
         /// <summary>Draws a texture centered at a specified position</summary>
         public static void DrawCentered(this SpriteBatch sb, Texture2D tex, Vector2 pos, Color col, float ang, Order lay, float scale = 1)
         {
-            sb.Draw(tex, pos, null, col, ang, new Vector2(tex.Width / 2, tex.Height / 2), scale, SpriteEffects.None, (float)lay / (float)Order.MAX);
+            sb.Draw(tex, pos, null, col, ang, new Vector2(tex.Width / 2, tex.Height / 2), scale, SpriteEffects.None, (float)lay / (float)Order.Max);
         }
 
         public static void DrawString(this SpriteBatch sb, string txt, Vector2 pos, Color col, Order lay, float scale = 1)
         {
-            sb.DrawString(PaintKiller.Font, txt, pos, col, 0, Vector2.Zero, scale, SpriteEffects.None, (float)lay / (float)Order.MAX);
+            sb.DrawString(PaintKiller.Font, txt, pos, col, 0, Vector2.Zero, scale, SpriteEffects.None, (float)lay / (float)Order.Max);
         }
 
         public static void Draw(this SpriteBatch sb, Texture2D tex, Vector2 pos, Color col, Order lay, float scale = 1)
         {
-            sb.Draw(tex, pos, null, col, 0, new Vector2(tex.Width / 2, tex.Height / 2), scale, SpriteEffects.None, (float)lay / (float)Order.MAX);
+            sb.Draw(tex, pos, null, col, 0, new Vector2(tex.Width / 2, tex.Height / 2), scale, SpriteEffects.None, (float)lay / (float)Order.Max);
         }
     }
 }

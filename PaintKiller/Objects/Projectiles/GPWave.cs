@@ -52,7 +52,7 @@ namespace PaintKilling.Objects.Projectiles
                     else if (go.IsColliding() && !list.Contains(go))
                     {
                         go.fce += ang * GetWeight() * 2 / go.GetWeight();
-                        shooter.OnStrike(go.Hit(2), go);
+                        Shooter.OnStrike(go.Hit(2), go);
                         list.Add(go);
                     }
                 }

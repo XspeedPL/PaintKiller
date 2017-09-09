@@ -38,7 +38,7 @@ namespace PaintKilling.Objects.Projectiles
                 if (go != null)
                 {
                     PaintKiller.Inst.AddObj(new GEC((pos + go.pos) / 2, "BloodS", 10));
-                    shooter.OnStrike(go.Hit(7), go);
+                    Shooter.OnStrike(go.Hit(7), go);
                     go.Knockback(pos, GetWeight());
                 }
             }

@@ -4,9 +4,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace PaintKilling.Objects.Projectiles
 {
-    public class GPMiniArr : GProjectile
+    public class GPMiniArrow : GProjectile
     {
-        public GPMiniArr(Vector2 position, Vector2 direction, GameObj shooter) : base(position, 4, direction, shooter)
+        public GPMiniArrow(Vector2 position, Vector2 direction, GameObj shooter) : base(position, 4, direction, shooter)
         {
             spd *= GetMaxSpd();
         }
@@ -42,7 +42,7 @@ namespace PaintKilling.Objects.Projectiles
             if (go != null)
             {
                 PaintKiller.Inst.AddBlood(this, go);
-                shooter.OnStrike(go.Hit(4), go);
+                Shooter.OnStrike(go.Hit(4), go);
                 go.Knockback(pos, GetWeight());
                 Kill();
             }
